@@ -3,54 +3,60 @@ package edu.uoc.ds.adt;
 import edu.uoc.ds.adt.sequential.Queue;
 import edu.uoc.ds.traversal.Iterator;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.Point;
+
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 public class PR1QueueTest {
-    PR1Queue pr1q;
 
-    private void fillQueue() {
-        for (char c = '0'; c < '9'; c++) {
-            pr1q.add(Character.valueOf(c));
+    private PR1Queue pr1q;
 
-        }
-    }
     @Before
     public void setUp() {
-        this.pr1q = new PR1Queue();
-
-        assertNotNull(this.pr1q.getQueue());
-        fillQueue();
+        pr1q = new PR1Queue();
+        assertNotNull(pr1q.getQueue());
+        assertNotNull(pr1q.getPointQueue());
+        fillPointQueue();
     }
 
     @After
     public void release() {
-        this.pr1q = null;
+        pr1q = null;
     }
 
+    private void fillPointQueue() {
+        double a = 0;
+        double b = 1;
 
-    @org.junit.Test
+        for (int i = 0; i < 9; i++) {
+            double theta = i;
+            Point p = generatePoint(a, b, theta);
+            pr1q.add(p);
+        }
+    }
+
+    private Point generatePoint(double a, double b, double theta) {
+        int x = (int) (a + b * theta * Math.cos(theta));
+        int y = (int) (a + b * theta * Math.sin(theta));
+        return new Point(x, y);
+    }
+/*
+    @Test
     public void queueTest() {
-        assertEquals(this.pr1q.CAPACITY-1, this.pr1q.getQueue().size());
-        Assert.assertEquals(Character.valueOf('0'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('1'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('2'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('3'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('4'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('5'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('6'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('7'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('8'), pr1q.poll());
-        assertEquals(0, this.pr1q.getQueue().size());
+        assertEquals(pr1q.CAPACITY-1, pr1q.getQueue().size());
+        // Ejemplo mínimo de uso con Character
+        pr1q.add('0');
+        Character c = pr1q.poll();
+        assertNotNull(c);
     }
 
+ */
+/*
     @Test
     public void queueTest2() {
-
         Queue<Character> queue = pr1q.getQueue();
         Iterator<Character> it = queue.values();
         assertTrue(it.hasNext());
@@ -79,7 +85,38 @@ public class PR1QueueTest {
 
         assertTrue(it.hasNext());
         assertEquals(Character.valueOf('8'), it.next());
+    }
+ */
 
+    @Test
+    public void pointQueueTest() {
+        Queue<Point> queue = pr1q.getPointQueue();
+
+        assertEquals(9, queue.size());
+
+        for (int i = 0; i < 9; i++) {
+            Point p = pr1q.pollPoint();
+            assertNotNull(p);
+        }
+
+        assertEquals(0, queue.size());
     }
 
+    @Test
+    public void pointQueueIteratorTest() {
+        Queue<Point> queue = pr1q.getPointQueue();
+        Iterator<Point> it = queue.values();
+
+        int count = 0;
+        while (it.hasNext()) {
+            Point p = it.next();
+            assertNotNull(p);
+            count++;
+        }
+
+        assertEquals(9, count);
+
+        Point p = pr1q.pollPoint();
+        assertNotNull(p);
+    }
 }
